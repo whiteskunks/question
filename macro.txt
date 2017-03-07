@@ -1,0 +1,39 @@
+Sub output_word2()
+' 「参照設定」で「参照可能なライブラリファイル」に
+' 「Microsoft Word xx.x Objecr Library」にチェックを入れてください
+
+
+    Dim wordApp As New word.Application         ' Word 起動
+    Dim doc As Document                         ' ドキュメント記録用
+    Set doc = wordApp.Documents.Add
+
+    Dim outputword As String       ' ドキュメント記録用
+    Const headerword = "ヘッダ入力文字設定"
+
+    With Worksheets("ワード出力")
+    outputword = Cells(1, 1).Value
+    wordApp.Selection.Text = outputword
+    End With
+    
+    ' ここからヘッダの出力設定。以下の部分、http://www.relief.jp/itnote/archives/word-macro-edit-header.php を参考にしている
+    Dim sec As Section
+    Dim hdr As HeaderFooter
+    
+    With wordApp.ActiveDocument.Sections                       ' 出力先のWordドキュメントを指定（ここが問題？）
+    
+    For Each sec In ActiveDocument.Sections
+        For Each hdr In sec.Headers                             ' この行で「型が一致しません」エラーが出る
+            With hdr.Range
+                .Text = headerword                             ' ヘッダに文字を入力
+                .Paragraphs.Alignment = wdAlignParagraphCenter ' 中央揃え
+            End With
+        Next hdr
+    Next sec
+    
+    End With
+    ' ここまでヘッダの出力設定。
+    
+    
+    wordApp.Visible = True
+
+End Sub
